@@ -21,7 +21,7 @@ int main()
   isPlayer = checkStartingPlayer();
   if (isPlayer == 2)
   {
-    cout << "Thank you for playing";
+    cout << "Thank you for playing\n";
     return 0;
   }
 
@@ -45,11 +45,15 @@ int checkStartingPlayer()
 {
   // ask user if they want to start
   cout << "Do you wish to go first? (y/n), if you want to exit the program press q\n";
-  char input;
 
   // gets input from user descarding charaters after the first one and puts it in input
   // this stops buffer overflow attacks.
-  input = getchar();
+  char input = getchar();
+
+  int c;
+  while ((c = getchar()) != '\n' && c != EOF)
+  {
+  }
 
   if (input == 'n')
   {
@@ -64,7 +68,6 @@ int checkStartingPlayer()
     return 2;
   }
 
-  
   cout << "error: please enter a valid character\n Try again\n";
 
   return checkStartingPlayer();
