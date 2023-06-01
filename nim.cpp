@@ -8,6 +8,9 @@ using namespace std;
 void printIntro();
 int checkStartingPlayer();
 
+// Global character array declaration
+char globalCharArray[14] = {'|','|','|',' ','|','|','|','|',' ','|','|','|','|','|'};
+
 int main()
 {
 
@@ -50,6 +53,8 @@ int checkStartingPlayer()
   // this stops buffer overflow attacks.
   char input = getchar();
 
+
+  //this clears the buffer. 
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
   {
