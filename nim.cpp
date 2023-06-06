@@ -2,19 +2,33 @@
 #include <string.h>
 #include <cstdlib>
 #include <cstdio>
+#include <list>
+
 using namespace std;
 
 // declare functions
 void printIntro();
 int checkStartingPlayer();
+void addValuesToList(int numberOfPiles);
 
-// Global character array declaration
-char globalCharArray[14] = {'|','|','|',' ','|','|','|','|',' ','|','|','|','|','|'};
+
+// Define a structure
+struct Pile
+{
+  int maxSizeOfPile;
+  int currentSizeOfPile;
+
+  Pile(int h, int c) : maxSizeOfPile(h), currentSizeOfPile(c) {}
+};
+
+// initilize a instance of a list of Piles
+list<Pile> piles;
 
 int main()
 {
 
   // declare variables
+  int numberOfPiles = 3;
   int isPlayer;
 
   // call printIntro
@@ -27,6 +41,8 @@ int main()
     cout << "Thank you for playing\n";
     return 0;
   }
+
+  addValuesToList(numberOfPiles);
 
   return 0;
 }
@@ -53,8 +69,7 @@ int checkStartingPlayer()
   // this stops buffer overflow attacks.
   char input = getchar();
 
-
-  //this clears the buffer. 
+  // this clears the buffer.
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
   {
@@ -76,4 +91,14 @@ int checkStartingPlayer()
   cout << "error: please enter a valid character\n Try again\n";
 
   return checkStartingPlayer();
+}
+
+void addValuesToList(int numberOfPiles)
+{
+  // loop through and add values to the list.
+
+  for (int i = 1; i <= numberOfPiles; i++)
+  { //adds value of i to maxNumberOfPiles and currentNumberOfPiles
+    piles.push_back(Pile(i, i));
+  }
 }
