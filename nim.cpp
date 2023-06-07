@@ -97,8 +97,8 @@ void addValuesToList(int numberOfPiles)
 {
   // loop through and add values to the list.
 
-  for (int i = 1; i <= numberOfPiles; i++)
+  for (int i = 0; i < numberOfPiles; i++)
   { //adds value of i to maxNumberOfPiles and currentNumberOfPiles
-    piles.push_back(Pile(i, i));
+    piles.push_back(Pile(i+3, i+3));
   }
 }
