@@ -10,7 +10,7 @@ using namespace std;
 void printIntro();
 int checkStartingPlayer();
 void addValuesToList(int numberOfPiles);
-
+void printBoard();
 
 // Define a structure
 struct Pile
@@ -98,7 +98,20 @@ void addValuesToList(int numberOfPiles)
   // loop through and add values to the list.
 
   for (int i = 0; i < numberOfPiles; i++)
-  { //adds value of i to maxNumberOfPiles and currentNumberOfPiles
-    piles.push_back(Pile(i+3, i+3));
+  { // adds value of i to maxNumberOfPiles and currentNumberOfPiles
+    piles.push_back(Pile(i + 3, i + 3));
   }
+}
+
+void printBoard()
+{
+  cout << "Current Board:\n";
+
+    // Loop through each pile and print the "|" for currentSizeOfPile
+    for (const auto& pile : piles) {
+        for (int i = 0; i < pile.currentSizeOfPile; i++) {
+            cout << "|";
+        }
+        cout << endl;
+    }
 }
