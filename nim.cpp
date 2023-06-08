@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <cstdio>
 #include <list>
+#include <limits>
+#include <iterator>
 
 using namespace std;
 
@@ -11,6 +13,9 @@ void printIntro();
 int checkStartingPlayer();
 void addValuesToList(int numberOfPiles);
 void printBoard();
+void updatePiles(int numberOfPiles);
+int findPile(int numberOfPiles);
+int findSticks(int pileNumber);
 
 // Define a structure
 struct Pile
@@ -43,7 +48,8 @@ int main()
   }
 
   addValuesToList(numberOfPiles);
-
+  printBoard();
+  updatePiles(numberOfPiles);
   return 0;
 }
 
@@ -57,17 +63,17 @@ void printIntro()
           "   You may pick sticks from 1 of the three piles\n"
           "   You can pick up as many sticks as you want from that pile\n"
           "   You have to pick up at least 1 stick each turn\n"
-          "   If you pick up the last stick you win\n";
+          "   If you pick up the last stick you win" << endl;
 }
 
 int checkStartingPlayer()
 {
   // ask user if they want to start
-  cout << "Do you wish to go first? (y/n), if you want to exit the program press q\n";
+  cout << "Do you wish to go first? (y/n), if you want to exit the program press q" << endl;
 
-  // gets input from user descarding charaters after the first one and puts it in input
+  // gets pileNumber from user descarding charaters after the first one and puts it in pileNumber
   // this stops buffer overflow attacks.
-  char input = getchar();
+  char pileNumber = getchar();
 
   // this clears the buffer.
   int c;
@@ -75,20 +81,20 @@ int checkStartingPlayer()
   {
   }
 
-  if (input == 'n')
+  if (pileNumber == 'n')
   {
     return 0;
   }
-  else if (input == 'y')
+  else if (pileNumber == 'y')
   {
     return 1;
   }
-  else if (input == 'q')
+  else if (pileNumber == 'q')
   {
     return 2;
   }
 
-  cout << "error: please enter a valid character\n Try again\n";
+  cout << "error: please enter a valid character\n Try again" << endl;
 
   return checkStartingPlayer();
 }
@@ -107,11 +113,92 @@ void printBoard()
 {
   cout << "Current Board:\n";
 
-    // Loop through each pile and print the "|" for currentSizeOfPile
-    for (const auto& pile : piles) {
-        for (int i = 0; i < pile.currentSizeOfPile; i++) {
-            cout << "|";
-        }
-        cout << endl;
+  // Loop through each pile and print the "|" for currentSizeOfPile
+  for (const auto &pile : piles)
+  {
+    for (int i = 0; i < pile.currentSizeOfPile; i++)
+    {
+      cout << "|";
     }
+    cout << endl;
+  }
+}
+
+int findPile(int numberOfPiles)
+{
+  // initiate variable pileNumber and isValudPileNumber
+  int pileNumber = 0;
+  bool isValidPileNumber = false;
+
+  // ask user for pileNumber
+  while (!isValidPileNumber)
+  {
+    cout << "Enter the pile number you want to pick up from between 1 and " << numberOfPiles << ": ";
+    if (cin >> pileNumber)
+    {
+      if (pileNumber >= 1 && pileNumber <= numberOfPiles)
+      {
+        isValidPileNumber = true;
+      }
+      else
+      {
+        cout << "PileNumber is outside the valid range. Try again." << endl;
+      }
+    }
+    else
+    {
+      cout << "Invalid pileNumber. Please enter an integer." << endl;
+      cin.clear();
+      cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+  }
+  pileNumber--; //this code decreases the pileNumber by one as lists are zero indexed
+  return pileNumber;
+}
+
+int findSticks(int pileNumber)
+{
+  // initiate variable stickNumber
+  int stickNumber = 0;
+
+  bool isValidStickNumber = false;
+
+  // Access the element at index pileNumber
+  Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
+
+  // ask user for pileNumber
+  while (!isValidStickNumber)
+  {
+    // TODO for the pile entered above get currentPileNumber
+    cout << "Enter the pile number you want to pick up from between 1 and " << pileAtPileNumber.currentSizeOfPile << ": ";
+    if (cin >> stickNumber)
+    {
+      if (stickNumber >= 1 && stickNumber <= pileAtPileNumber.currentSizeOfPile)
+      {
+        isValidStickNumber = true;
+      }
+      else
+      {
+        cout << "StickNumber is outside the valid range. Try again." << endl;
+      }
+    }
+    else
+    {
+      cout << "Invalid StickNumber. Please enter an integer." << endl;
+      cin.clear();
+      cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+  }
+
+  return stickNumber;
+}
+
+void updatePiles(int numberOfPiles)
+{
+  // declare variables
+  int pileNumber = findPile(numberOfPiles);
+  int stickNumber = findSticks(pileNumber);
+
+  cout << "Your Stick Number was:" << stickNumber << endl;
+  cout << "Your pile index was:" << pileNumber << endl;
 }
