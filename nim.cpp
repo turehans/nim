@@ -22,6 +22,7 @@ struct Pile
 {
   int maxSizeOfPile;
   int currentSizeOfPile;
+  bool isActivePile = true;
 
   Pile(int h, int c) : maxSizeOfPile(h), currentSizeOfPile(c) {}
 };
@@ -63,7 +64,8 @@ void printIntro()
           "   You may pick sticks from 1 of the three piles\n"
           "   You can pick up as many sticks as you want from that pile\n"
           "   You have to pick up at least 1 stick each turn\n"
-          "   If you pick up the last stick you win" << endl;
+          "   If you pick up the last stick you win"
+       << endl;
 }
 
 int checkStartingPlayer()
@@ -73,7 +75,7 @@ int checkStartingPlayer()
 
   // gets pileNumber from user descarding charaters after the first one and puts it in pileNumber
   // this stops buffer overflow attacks.
-  char pileNumber = getchar();
+  char input = getchar();
 
   // this clears the buffer.
   int c;
@@ -81,15 +83,15 @@ int checkStartingPlayer()
   {
   }
 
-  if (pileNumber == 'n')
+  if (input == 'n')
   {
     return 0;
   }
-  else if (pileNumber == 'y')
+  else if (input == 'y')
   {
     return 1;
   }
-  else if (pileNumber == 'q')
+  else if (input == 'q')
   {
     return 2;
   }
@@ -138,7 +140,17 @@ int findPile(int numberOfPiles)
     {
       if (pileNumber >= 1 && pileNumber <= numberOfPiles)
       {
-        isValidPileNumber = true;
+        // Access the element at index 0
+        Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
+
+        if (pileAtPileNumber.isActivePile == true)
+        {
+          isValidPileNumber = true;
+        }
+        else
+        {
+          cout << "Error: that pile is empty, please try again." << endl;
+        }
       }
       else
       {
@@ -152,7 +164,7 @@ int findPile(int numberOfPiles)
       cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
   }
-  pileNumber--; //this code decreases the pileNumber by one as lists are zero indexed
+  pileNumber--; // this code decreases the pileNumber by one as lists are zero indexed
   return pileNumber;
 }
 
@@ -170,7 +182,7 @@ int findSticks(int pileNumber)
   while (!isValidStickNumber)
   {
     // TODO for the pile entered above get currentPileNumber
-    cout << "Enter the pile number you want to pick up from between 1 and " << pileAtPileNumber.currentSizeOfPile << ": ";
+    cout << "Enter the number of sticks you want to pick up between 1 and " << pileAtPileNumber.currentSizeOfPile << ": ";
     if (cin >> stickNumber)
     {
       if (stickNumber >= 1 && stickNumber <= pileAtPileNumber.currentSizeOfPile)
@@ -186,7 +198,7 @@ int findSticks(int pileNumber)
     {
       cout << "Invalid StickNumber. Please enter an integer." << endl;
       cin.clear();
-      cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
   }
 
@@ -199,6 +211,16 @@ void updatePiles(int numberOfPiles)
   int pileNumber = findPile(numberOfPiles);
   int stickNumber = findSticks(pileNumber);
 
-  cout << "Your Stick Number was:" << stickNumber << endl;
-  cout << "Your pile index was:" << pileNumber << endl;
+  // Access the element at index pileNumber
+  Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
+
+  // as I have already checked if the value of stickNumber is between 1 and currentSizeOfPile
+  // I can just take stick number off.
+  pileAtPileNumber.currentSizeOfPile -= stickNumber;
+
+  // if pileAtPileNumber.currentSozeOfPile is now equal to 0, change bool in structure to false
+  if (pileAtPileNumber.currentSizeOfPile == 0)
+  {
+    pileAtPileNumber.isActivePile = false;
+  }
 }
