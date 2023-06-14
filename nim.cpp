@@ -16,6 +16,7 @@ void printBoard();
 void updatePiles(int numberOfPiles);
 int findPile(int numberOfPiles);
 int findSticks(int pileNumber);
+int checkRemainingPiles(int numberOfPiles);
 
 // Define a structure
 struct Pile
@@ -51,6 +52,7 @@ int main()
   addValuesToList(numberOfPiles);
   printBoard();
   updatePiles(numberOfPiles);
+  checkRemainingPiles(numberOfPiles);
   return 0;
 }
 
@@ -131,11 +133,12 @@ int findPile(int numberOfPiles)
   // initiate variable pileNumber and isValudPileNumber
   int pileNumber = 0;
   bool isValidPileNumber = false;
+  numberOfPiles--;
 
   // ask user for pileNumber
   while (!isValidPileNumber)
   {
-    cout << "Enter the pile number you want to pick up from between 1 and " << numberOfPiles << ": ";
+    cout << "Enter the index of the pile number you want to pick up from between 0 and " << numberOfPiles << ": ";
     if (cin >> pileNumber)
     {
       if (pileNumber >= 1 && pileNumber <= numberOfPiles)
@@ -161,10 +164,10 @@ int findPile(int numberOfPiles)
     {
       cout << "Invalid pileNumber. Please enter an integer." << endl;
       cin.clear();
-      cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
   }
-  pileNumber--; // this code decreases the pileNumber by one as lists are zero indexed
+
   return pileNumber;
 }
 
@@ -223,4 +226,26 @@ void updatePiles(int numberOfPiles)
   {
     pileAtPileNumber.isActivePile = false;
   }
+
+  checkRemainingPiles;
+}
+
+int checkRemainingPiles(int numberOfPiles)
+{
+  int remainingPiles = 0;
+
+  
+  for (int i = 0; i < numberOfPiles; i++)
+  {
+    Pile &pileAtPileNumber = *next(piles.begin(), i); //creates a pointer to the pile at index i
+
+
+    //check if pileAtPileNumber.isActivePile == true add 1 to remainingPiles
+    if (pileAtPileNumber.isActivePile == true){
+      remainingPiles++;
+    }
+
+  }
+  cout << "The Remaining Number Of Piles is, " << remainingPiles << endl;
+  return remainingPiles;
 }
