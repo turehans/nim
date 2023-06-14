@@ -51,8 +51,14 @@ int main()
 
   addValuesToList(numberOfPiles);
   printBoard();
-  updatePiles(numberOfPiles);
-  checkRemainingPiles(numberOfPiles);
+
+  while (checkRemainingPiles(numberOfPiles) > 0)
+  {
+    updatePiles(numberOfPiles);
+    printBoard();
+  }
+
+
   return 0;
 }
 
@@ -141,7 +147,7 @@ int findPile(int numberOfPiles)
     cout << "Enter the index of the pile number you want to pick up from between 0 and " << numberOfPiles << ": ";
     if (cin >> pileNumber)
     {
-      if (pileNumber >= 1 && pileNumber <= numberOfPiles)
+      if (pileNumber >= 0 && pileNumber <= numberOfPiles)
       {
         // Access the element at index 0
         Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
@@ -226,25 +232,21 @@ void updatePiles(int numberOfPiles)
   {
     pileAtPileNumber.isActivePile = false;
   }
-
-  checkRemainingPiles;
 }
 
 int checkRemainingPiles(int numberOfPiles)
 {
   int remainingPiles = 0;
 
-  
   for (int i = 0; i < numberOfPiles; i++)
   {
-    Pile &pileAtPileNumber = *next(piles.begin(), i); //creates a pointer to the pile at index i
+    Pile &pileAtPileNumber = *next(piles.begin(), i); // creates a pointer to the pile at index i
 
-
-    //check if pileAtPileNumber.isActivePile == true add 1 to remainingPiles
-    if (pileAtPileNumber.isActivePile == true){
+    // check if pileAtPileNumber.isActivePile == true add 1 to remainingPiles
+    if (pileAtPileNumber.isActivePile == true)
+    {
       remainingPiles++;
     }
-
   }
   cout << "The Remaining Number Of Piles is, " << remainingPiles << endl;
   return remainingPiles;
