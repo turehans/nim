@@ -5,6 +5,7 @@
 #include <list>
 #include <limits>
 #include <iterator>
+#include <random>
 
 using namespace std;
 
@@ -13,10 +14,24 @@ void printIntro();
 int checkStartingPlayer();
 void addValuesToList(int numberOfPiles);
 void printBoard();
-void updatePiles(int numberOfPiles);
-int findPile(int numberOfPiles);
-int findSticks(int pileNumber);
+void updatePiles(int numberOfPiles, int isPlayer);
+int findPile(int numberOfPiles, int isPlayer);
+int findSticks(int pileNumber, int isPlayer);
 int checkRemainingPiles(int numberOfPiles);
+
+// define namespace Random
+namespace Random
+{
+  // Random number generator engine
+  mt19937 gen(random_device{}());
+
+  // Function to generate a random number in a given range
+  int getRandomNumber(int max)
+  {
+    uniform_int_distribution<int> dis(1, max);
+    return dis(gen);
+  }
+}
 
 // Define a structure
 struct Pile
@@ -54,10 +69,9 @@ int main()
 
   while (checkRemainingPiles(numberOfPiles) > 0)
   {
-    updatePiles(numberOfPiles);
+    updatePiles(numberOfPiles, isPlayer);
     printBoard();
   }
-
 
   return 0;
 }
@@ -134,50 +148,69 @@ void printBoard()
   }
 }
 
-int findPile(int numberOfPiles)
+int findPile(int numberOfPiles, int isPlayer)
 {
   // initiate variable pileNumber and isValudPileNumber
   int pileNumber = 0;
   bool isValidPileNumber = false;
   numberOfPiles--;
 
-  // ask user for pileNumber
-  while (!isValidPileNumber)
+  // check if it is the player or computer
+  if (isPlayer == true)
   {
-    cout << "Enter the index of the pile number you want to pick up from between 0 and " << numberOfPiles << ": ";
-    if (cin >> pileNumber)
+    // ask user for pileNumber
+    while (!isValidPileNumber)
     {
-      if (pileNumber >= 0 && pileNumber <= numberOfPiles)
+      cout << "Enter the index of the pile number you want to pick up from between 0 and " << numberOfPiles << ": ";
+      if (cin >> pileNumber)
       {
-        // Access the element at index 0
-        Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
-
-        if (pileAtPileNumber.isActivePile == true)
+        if (pileNumber >= 0 && pileNumber <= numberOfPiles)
         {
-          isValidPileNumber = true;
+          // Access the element at index 0
+          Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
+
+          if (pileAtPileNumber.isActivePile == true)
+          {
+            isValidPileNumber = true;
+          }
+          else
+          {
+            cout << "Error: that pile is empty, please try again." << endl;
+          }
         }
         else
         {
-          cout << "Error: that pile is empty, please try again." << endl;
+          cout << "PileNumber is outside the valid range. Try again." << endl;
         }
       }
       else
       {
-        cout << "PileNumber is outside the valid range. Try again." << endl;
+        cout << "Invalid pileNumber. Please enter an integer." << endl;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
       }
     }
-    else
+  }
+  else
+  {
+    while (isValidPileNumber == false)
     {
-      cout << "Invalid pileNumber. Please enter an integer." << endl;
-      cin.clear();
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+      pileNumber = Random::getRandomNumber(numberOfPiles);
+      // Access the element at index 0
+      Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
+
+      if (pileAtPileNumber.isActivePile == true)
+      {
+        isValidPileNumber = true;
+      }
     }
   }
 
   return pileNumber;
 }
 
-int findSticks(int pileNumber)
+int findSticks(int pileNumber, int isPlayer)
 {
   // initiate variable stickNumber
   int stickNumber = 0;
@@ -187,38 +220,45 @@ int findSticks(int pileNumber)
   // Access the element at index pileNumber
   Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
 
-  // ask user for pileNumber
-  while (!isValidStickNumber)
+  // check if isPlayer == true
+  if (isPlayer == true)
   {
-    // TODO for the pile entered above get currentPileNumber
-    cout << "Enter the number of sticks you want to pick up between 1 and " << pileAtPileNumber.currentSizeOfPile << ": ";
-    if (cin >> stickNumber)
+    // ask user for pileNumber
+    while (!isValidStickNumber)
     {
-      if (stickNumber >= 1 && stickNumber <= pileAtPileNumber.currentSizeOfPile)
+      // TODO for the pile entered above get currentPileNumber
+      cout << "Enter the number of sticks you want to pick up between 1 and " << pileAtPileNumber.currentSizeOfPile << ": ";
+      if (cin >> stickNumber)
       {
-        isValidStickNumber = true;
+        if (stickNumber >= 1 && stickNumber <= pileAtPileNumber.currentSizeOfPile)
+        {
+          isValidStickNumber = true;
+        }
+        else
+        {
+          cout << "StickNumber is outside the valid range. Try again." << endl;
+        }
       }
       else
       {
-        cout << "StickNumber is outside the valid range. Try again." << endl;
+        cout << "Invalid StickNumber. Please enter an integer." << endl;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
       }
     }
-    else
-    {
-      cout << "Invalid StickNumber. Please enter an integer." << endl;
-      cin.clear();
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
   }
-
+  else
+  {
+    stickNumber = Random::getRandomNumber(pileAtPileNumber.currentSizeOfPile);
+  }
   return stickNumber;
 }
 
-void updatePiles(int numberOfPiles)
+void updatePiles(int numberOfPiles, int isPlayer)
 {
   // declare variables
-  int pileNumber = findPile(numberOfPiles);
-  int stickNumber = findSticks(pileNumber);
+  int pileNumber = findPile(numberOfPiles, isPlayer);
+  int stickNumber = findSticks(pileNumber, isPlayer);
 
   // Access the element at index pileNumber
   Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
