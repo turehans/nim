@@ -1,11 +1,11 @@
-#include <iostream>
-#include <string.h>
-#include <cstdlib>
 #include <cstdio>
-#include <list>
-#include <limits>
+#include <cstdlib>
+#include <iostream>
 #include <iterator>
+#include <limits>
+#include <list>
 #include <random>
+#include <string.h>
 
 using namespace std;
 
@@ -20,22 +20,19 @@ int findSticks(int pileNumber, int isPlayer);
 int checkRemainingPiles(int numberOfPiles);
 
 // define namespace Random
-namespace Random
-{
-  // Random number generator engine
-  mt19937 gen(random_device{}());
+namespace Random {
+// Random number generator engine
+mt19937 gen(random_device{}());
 
-  // Function to generate a random number in a given range
-  int getRandomNumber(int max)
-  {
-    uniform_int_distribution<int> dis(1, max);
-    return dis(gen);
-  }
+// Function to generate a random number in a given range
+int getRandomNumber(int max) {
+  uniform_int_distribution<int> dis(1, max);
+  return dis(gen);
 }
+} // namespace Random
 
 // Define a structure
-struct Pile
-{
+struct Pile {
   int maxSizeOfPile;
   int currentSizeOfPile;
   bool isActivePile = true;
@@ -46,8 +43,7 @@ struct Pile
 // initilize a instance of a list of Piles
 list<Pile> piles;
 
-int main()
-{
+int main() {
 
   // declare variables
   int numberOfPiles = 3;
@@ -58,26 +54,31 @@ int main()
 
   // ask player if they want to go first and update isPlayer
   isPlayer = checkStartingPlayer();
-  if (isPlayer == 2)
-  {
-    cout << "Thank you for playing\n";
+  if (isPlayer == 2) {
+    cout << "Thank you for playing " << endl;
     return 0;
   }
 
   addValuesToList(numberOfPiles);
   printBoard();
 
-  while (checkRemainingPiles(numberOfPiles) > 0)
-  {
-    updatePiles(numberOfPiles, isPlayer);
-    printBoard();
+  while (checkRemainingPiles(numberOfPiles) > 0) {
+    if (isPlayer == 1) {
+      cout << "\n\nIt is your turn player 1" << endl;
+      updatePiles(numberOfPiles, isPlayer);
+      printBoard();
+      isPlayer = 0;
+    } else {
+      updatePiles(numberOfPiles, isPlayer);
+      printBoard();
+      isPlayer = 1;
+    }
   }
 
   return 0;
 }
 
-void printIntro()
-{
+void printIntro() {
 
   // print out the introduction
   cout << "Welcome to Nim!! \n"
@@ -90,31 +91,26 @@ void printIntro()
        << endl;
 }
 
-int checkStartingPlayer()
-{
+int checkStartingPlayer() {
   // ask user if they want to start
-  cout << "Do you wish to go first? (y/n), if you want to exit the program press q" << endl;
+  cout << "Do you wish to go first? (y/n), if you want to exit the program "
+          "press q"
+       << endl;
 
-  // gets pileNumber from user descarding charaters after the first one and puts it in pileNumber
-  // this stops buffer overflow attacks.
+  // gets pileNumber from user descarding charaters after the first one and puts
+  // it in pileNumber this stops buffer overflow attacks.
   char input = getchar();
 
   // this clears the buffer.
   int c;
-  while ((c = getchar()) != '\n' && c != EOF)
-  {
+  while ((c = getchar()) != '\n' && c != EOF) {
   }
 
-  if (input == 'n')
-  {
+  if (input == 'n') {
     return 0;
-  }
-  else if (input == 'y')
-  {
+  } else if (input == 'y') {
     return 1;
-  }
-  else if (input == 'q')
-  {
+  } else if (input == 'q') {
     return 2;
   }
 
@@ -123,85 +119,67 @@ int checkStartingPlayer()
   return checkStartingPlayer();
 }
 
-void addValuesToList(int numberOfPiles)
-{
+void addValuesToList(int numberOfPiles) {
   // loop through and add values to the list.
 
-  for (int i = 0; i < numberOfPiles; i++)
-  { // adds value of i to maxNumberOfPiles and currentNumberOfPiles
+  for (int i = 0; i < numberOfPiles;
+       i++) { // adds value of i to maxNumberOfPiles and currentNumberOfPiles
     piles.push_back(Pile(i + 3, i + 3));
   }
 }
 
-void printBoard()
-{
+void printBoard() {
   cout << "Current Board:\n";
 
   // Loop through each pile and print the "|" for currentSizeOfPile
-  for (const auto &pile : piles)
-  {
-    for (int i = 0; i < pile.currentSizeOfPile; i++)
-    {
+  for (const auto &pile : piles) {
+    for (int i = 0; i < pile.currentSizeOfPile; i++) {
       cout << "|";
     }
     cout << endl;
   }
 }
 
-int findPile(int numberOfPiles, int isPlayer)
-{
+int findPile(int numberOfPiles, int isPlayer) {
   // initiate variable pileNumber and isValudPileNumber
   int pileNumber = 0;
   bool isValidPileNumber = false;
   numberOfPiles--;
 
   // check if it is the player or computer
-  if (isPlayer == true)
-  {
+  if (isPlayer == true) {
     // ask user for pileNumber
-    while (!isValidPileNumber)
-    {
-      cout << "Enter the index of the pile number you want to pick up from between 0 and " << numberOfPiles << ": ";
-      if (cin >> pileNumber)
-      {
-        if (pileNumber >= 0 && pileNumber <= numberOfPiles)
-        {
+    while (!isValidPileNumber) {
+      cout << "Enter the index of the pile number you want to pick up from "
+              "between 0 and "
+           << numberOfPiles << ": ";
+      if (cin >> pileNumber) {
+        if (pileNumber >= 0 && pileNumber <= numberOfPiles) {
           // Access the element at index 0
           Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
 
-          if (pileAtPileNumber.isActivePile == true)
-          {
+          if (pileAtPileNumber.isActivePile == true) {
             isValidPileNumber = true;
-          }
-          else
-          {
+          } else {
             cout << "Error: that pile is empty, please try again." << endl;
           }
-        }
-        else
-        {
+        } else {
           cout << "PileNumber is outside the valid range. Try again." << endl;
         }
-      }
-      else
-      {
+      } else {
         cout << "Invalid pileNumber. Please enter an integer." << endl;
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
       }
     }
-  }
-  else
-  {
-    while (isValidPileNumber == false)
-    {
+  } else {
+    while (isValidPileNumber == false) {
 
       pileNumber = Random::getRandomNumber(numberOfPiles);
       // Access the element at index 0
       Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
 
-      if (pileAtPileNumber.isActivePile == true)
-      {
+      if (pileAtPileNumber.isActivePile == true) {
         isValidPileNumber = true;
       }
     }
@@ -210,8 +188,7 @@ int findPile(int numberOfPiles, int isPlayer)
   return pileNumber;
 }
 
-int findSticks(int pileNumber, int isPlayer)
-{
+int findSticks(int pileNumber, int isPlayer) {
   // initiate variable stickNumber
   int stickNumber = 0;
 
@@ -221,70 +198,78 @@ int findSticks(int pileNumber, int isPlayer)
   Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
 
   // check if isPlayer == true
-  if (isPlayer == true)
-  {
+  if (isPlayer == true) {
     // ask user for pileNumber
-    while (!isValidStickNumber)
-    {
+    while (!isValidStickNumber) {
       // TODO for the pile entered above get currentPileNumber
-      cout << "Enter the number of sticks you want to pick up between 1 and " << pileAtPileNumber.currentSizeOfPile << ": ";
-      if (cin >> stickNumber)
-      {
-        if (stickNumber >= 1 && stickNumber <= pileAtPileNumber.currentSizeOfPile)
-        {
+      cout << "Enter the number of sticks you want to pick up between 1 and "
+           << pileAtPileNumber.currentSizeOfPile << ": ";
+      if (cin >> stickNumber) {
+        if (stickNumber >= 1 &&
+            stickNumber <= pileAtPileNumber.currentSizeOfPile) {
           isValidStickNumber = true;
-        }
-        else
-        {
+        } else {
           cout << "StickNumber is outside the valid range. Try again." << endl;
         }
-      }
-      else
-      {
+      } else {
         cout << "Invalid StickNumber. Please enter an integer." << endl;
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
       }
     }
-  }
-  else
-  {
-    stickNumber = Random::getRandomNumber(pileAtPileNumber.currentSizeOfPile);
+  } else {
+    if (pileAtPileNumber.currentSizeOfPile > 0) {
+      stickNumber = Random::getRandomNumber(pileAtPileNumber.currentSizeOfPile);
+    } else {
+      cout << "The computer can't pick a move because currentSizeOfPile is not "
+              "above 0,"
+           << "this error will be fixed when I implement a winner function"
+           << endl;
+    }
   }
   return stickNumber;
 }
 
-void updatePiles(int numberOfPiles, int isPlayer)
-{
+void updatePiles(int numberOfPiles, int isPlayer) {
   // declare variables
   int pileNumber = findPile(numberOfPiles, isPlayer);
   int stickNumber = findSticks(pileNumber, isPlayer);
 
+  // tell player their move or computer move.
+
+  if (isPlayer == 1) {
+    cout << "Player 1, you picked up " << stickNumber << " stick(s) from pile "
+         << (pileNumber + 1) << "\n"
+         << endl;
+  } else {
+    cout << "The computer picked up " << stickNumber << " stick(s) from pile "
+         << (pileNumber + 1) << "\n"
+         << endl;
+  }
+
   // Access the element at index pileNumber
   Pile &pileAtPileNumber = *next(piles.begin(), pileNumber);
 
-  // as I have already checked if the value of stickNumber is between 1 and currentSizeOfPile
-  // I can just take stick number off.
+  // as I have already checked if the value of stickNumber is between 1 and
+  // currentSizeOfPile I can just take stick number off.
   pileAtPileNumber.currentSizeOfPile -= stickNumber;
 
-  // if pileAtPileNumber.currentSozeOfPile is now equal to 0, change bool in structure to false
-  if (pileAtPileNumber.currentSizeOfPile == 0)
-  {
+  // if pileAtPileNumber.currentSozeOfPile is now equal to 0, change bool in
+  // structure to false
+  if (pileAtPileNumber.currentSizeOfPile == 0) {
     pileAtPileNumber.isActivePile = false;
   }
 }
 
-int checkRemainingPiles(int numberOfPiles)
-{
+int checkRemainingPiles(int numberOfPiles) {
   int remainingPiles = 0;
 
-  for (int i = 0; i < numberOfPiles; i++)
-  {
-    Pile &pileAtPileNumber = *next(piles.begin(), i); // creates a pointer to the pile at index i
+  for (int i = 0; i < numberOfPiles; i++) {
+    Pile &pileAtPileNumber =
+        *next(piles.begin(), i); // creates a pointer to the pile at index i
 
     // check if pileAtPileNumber.isActivePile == true add 1 to remainingPiles
-    if (pileAtPileNumber.isActivePile == true)
-    {
+    if (pileAtPileNumber.isActivePile == true) {
       remainingPiles++;
     }
   }

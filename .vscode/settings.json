@@ -47,4 +47,6 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp"
     }
+    ,"C_Cpp.clang_format_style": "{BasedOnStyle: llvm, BreakBeforeBraces: Attach}"
+
 }
