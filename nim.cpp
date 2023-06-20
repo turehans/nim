@@ -18,17 +18,18 @@ void updatePiles(int numberOfPiles, int isPlayer);
 int findPile(int numberOfPiles, int isPlayer);
 int findSticks(int pileNumber, int isPlayer);
 int checkRemainingPiles(int numberOfPiles);
+bool checkForWinner(int numberOfPiles);
 
 // define namespace Random
 namespace Random {
-// Random number generator engine
-mt19937 gen(random_device{}());
+  // Random number generator engine
+  mt19937 gen(random_device{}());
 
-// Function to generate a random number in a given range
-int getRandomNumber(int max) {
-  uniform_int_distribution<int> dis(1, max);
-  return dis(gen);
-}
+  // Function to generate a random number in a given range
+  int getRandomNumber(int max) {
+    uniform_int_distribution<int> dis(1, max);
+    return dis(gen);
+  }
 } // namespace Random
 
 // Define a structure
@@ -48,6 +49,7 @@ int main() {
   // declare variables
   int numberOfPiles = 3;
   int isPlayer;
+  bool winnerFound = false;
 
   // call printIntro
   printIntro();
@@ -67,14 +69,35 @@ int main() {
       cout << "\n\nIt is your turn player 1" << endl;
       updatePiles(numberOfPiles, isPlayer);
       printBoard();
+      if (checkForWinner(numberOfPiles)) {
+        cout << "The winner is the Computer" << endl;
+        winnerFound = true;
+        break;
+      }
       isPlayer = 0;
     } else {
       updatePiles(numberOfPiles, isPlayer);
       printBoard();
+      if (checkForWinner(numberOfPiles)) {
+        cout << "The winner is Player 1" << endl;
+        winnerFound = true;
+        break;
+      }
       isPlayer = 1;
     }
   }
 
+
+  //catering for if the player took all of the remaining stick and didn't leave 1
+  if (winnerFound == false){
+    if (isPlayer == 1){
+      cout << "The winner is the computer" << endl;
+    } else {
+      cout << "The winner is Player 1" << endl;
+    }
+  }
+
+  cout << "Thank you for playing" << endl;
   return 0;
 }
 
@@ -263,7 +286,6 @@ void updatePiles(int numberOfPiles, int isPlayer) {
 
 int checkRemainingPiles(int numberOfPiles) {
   int remainingPiles = 0;
-
   for (int i = 0; i < numberOfPiles; i++) {
     Pile &pileAtPileNumber =
         *next(piles.begin(), i); // creates a pointer to the pile at index i
@@ -273,6 +295,21 @@ int checkRemainingPiles(int numberOfPiles) {
       remainingPiles++;
     }
   }
-  cout << "The Remaining Number Of Piles is, " << remainingPiles << endl;
   return remainingPiles;
+}
+
+bool checkForWinner(int numberOfPiles) {
+  int remainingPiles = checkRemainingPiles(numberOfPiles);
+
+  if (remainingPiles == 1) {
+    for (int i = 0; i < numberOfPiles; i++) {
+      Pile &pileAtPileNumber = *next(piles.begin(), i);
+
+      if (pileAtPileNumber.isActivePile && pileAtPileNumber.currentSizeOfPile <= 1) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
