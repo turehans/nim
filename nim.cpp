@@ -22,14 +22,14 @@ bool checkForWinner(int numberOfPiles);
 
 // define namespace Random
 namespace Random {
-  // Random number generator engine
-  mt19937 gen(random_device{}());
+// Random number generator engine
+mt19937 gen(random_device{}());
 
-  // Function to generate a random number in a given range
-  int getRandomNumber(int max) {
-    uniform_int_distribution<int> dis(1, max);
-    return dis(gen);
-  }
+// Function to generate a random number in a given range
+int getRandomNumber(int max) {
+  uniform_int_distribution<int> dis(1, max);
+  return dis(gen);
+}
 } // namespace Random
 
 // Define a structure
@@ -87,10 +87,10 @@ int main() {
     }
   }
 
-
-  //catering for if the player took all of the remaining stick and didn't leave 1
-  if (winnerFound == false){
-    if (isPlayer == 1){
+  // catering for if the player took all of the remaining stick and didn't leave
+  // 1
+  if (winnerFound == false) {
+    if (isPlayer == 1) {
       cout << "The winner is the computer" << endl;
     } else {
       cout << "The winner is Player 1" << endl;
@@ -145,8 +145,8 @@ int checkStartingPlayer() {
 void addValuesToList(int numberOfPiles) {
   // loop through and add values to the list.
 
-  for (int i = 0; i < numberOfPiles;
-       i++) { // adds value of i to maxNumberOfPiles and currentNumberOfPiles
+  // adds value of i to maxNumberOfPiles and currentNumberOfPiles
+  for (int i = 0; i < numberOfPiles; i++) {
     piles.push_back(Pile(i + 3, i + 3));
   }
 }
@@ -287,8 +287,8 @@ void updatePiles(int numberOfPiles, int isPlayer) {
 int checkRemainingPiles(int numberOfPiles) {
   int remainingPiles = 0;
   for (int i = 0; i < numberOfPiles; i++) {
-    Pile &pileAtPileNumber =
-        *next(piles.begin(), i); // creates a pointer to the pile at index i
+    // creates a pointer to the pile at index i
+    Pile &pileAtPileNumber = *next(piles.begin(), i);
 
     // check if pileAtPileNumber.isActivePile == true add 1 to remainingPiles
     if (pileAtPileNumber.isActivePile == true) {
@@ -305,7 +305,8 @@ bool checkForWinner(int numberOfPiles) {
     for (int i = 0; i < numberOfPiles; i++) {
       Pile &pileAtPileNumber = *next(piles.begin(), i);
 
-      if (pileAtPileNumber.isActivePile && pileAtPileNumber.currentSizeOfPile <= 1) {
+      if (pileAtPileNumber.isActivePile &&
+          pileAtPileNumber.currentSizeOfPile <= 1) {
         return true;
       }
     }
