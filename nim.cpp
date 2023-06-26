@@ -8,24 +8,31 @@ using namespace std;
 
 // declare functions
 void printIntro();
+
 int checkStartingPlayer();
+
 void addValuesToList(int numberOfPiles);
+
 void printBoard();
+
 void updatePiles(int isPlayer);
+
 int findSticks(int pileNumber, int isPlayer);
+
 int checkRemainingPiles();
+
 int checkForWinner();
 
 // define namespace Random
 namespace Random {
 // Random number generator engine
-mt19937 gen(random_device{}());
+    mt19937 gen(random_device{}());
 
 // Function to generate a random number in a given range
-int getRandomNumber(int max) {
-  uniform_int_distribution<int> dis(1, max);
-  return dis(gen);
-}
+    int getRandomNumber(int max) {
+        uniform_int_distribution<int> dis(1, max);
+        return dis(gen);
+    }
 } // namespace Random
 
 // initialize an instance of a list of Piles
@@ -33,236 +40,235 @@ vector<int> piles;
 
 int main() {
 
-  // declare variables
-  int numberOfPiles = 3;
-  int isPlayer;
-  bool winnerFound = false;
+    // declare variables
+    int numberOfPiles = 3;
+    int isPlayer;
+    bool winnerFound = false;
 
-  // call printIntro
-  printIntro();
+    // call printIntro
+    printIntro();
 
-  // ask player if they want to go first and update isPlayer
-  isPlayer = checkStartingPlayer();
-  if (isPlayer == 2) {
-    cout << "Thank you for playing " << endl;
+    // ask player if they want to go first and update isPlayer
+    isPlayer = checkStartingPlayer();
+    if (isPlayer == 2) {
+        cout << "Thank you for playing " << endl;
+        return 0;
+    }
+
+    addValuesToList(numberOfPiles);
+    printBoard();
+
+    while (checkRemainingPiles() > 0) {
+        if (isPlayer == 1) {
+            if (checkForWinner() == 1) {
+                cout << "\n\nThe winner is Player 1" << endl;
+                winnerFound = true;
+                break;
+            } else if (checkForWinner() == 2) {
+                cout << "\n\nThe winner is the Computer" << endl;
+            }
+            cout << "\n\nIt is your turn player 1" << endl;
+            updatePiles(isPlayer);
+            printBoard();
+            isPlayer = 0;
+        } else {
+            if (checkForWinner() == 1) {
+                cout << "\n\nThe winner is the Computer" << endl;
+                winnerFound = true;
+                break;
+            } else if (checkForWinner() == 2) {
+                cout << "\n\nThe winner is Player 1" << endl;
+            }
+            updatePiles(isPlayer);
+            printBoard();
+            isPlayer = 1;
+        }
+    }
+
+    // catering for if the player took all the remaining stick and didn't leave
+    // 1
+    if (!winnerFound) {
+        if (isPlayer == 1) {
+            cout << "\n\nThe winner is the computer" << endl;
+        } else {
+            cout << "\n\nThe winner is Player 1" << endl;
+        }
+    }
+
+    cout << "Thank you for playing" << endl;
     return 0;
-  }
-
-  addValuesToList(numberOfPiles);
-  printBoard();
-
-  while (checkRemainingPiles() > 0) {
-    if (isPlayer == 1) {
-      if (checkForWinner() == 1) {
-        cout << "The winner is Player 1" << endl;
-        winnerFound = true;
-        break;
-      } else if (checkForWinner() == 2) {
-        cout << "The winner is the Computer" << endl;
-      }
-      cout << "\n\nIt is your turn player 1" << endl;
-      updatePiles(isPlayer);
-      printBoard();
-      isPlayer = 0;
-    } else {
-      if (checkForWinner() == 1) {
-        cout << "The winner is the Computer" << endl;
-        winnerFound = true;
-        break;
-      } else if (checkForWinner() == 2) {
-        cout << "The winner is Player 1" << endl;
-      }
-      updatePiles(isPlayer);
-      printBoard();
-      isPlayer = 1;
-    }
-  }
-
-  // catering for if the player took all the remaining stick and didn't leave
-  // 1
-  if (!winnerFound) {
-    if (isPlayer == 1) {
-      cout << "The winner is the computer" << endl;
-    } else {
-      cout << "The winner is Player 1" << endl;
-    }
-  }
-
-  cout << "Thank you for playing" << endl;
-  return 0;
 }
 
 void printIntro() {
 
-  // print out the introduction
-  cout << "Welcome to Nim!! \n"
-          "This is a stick picking up game.\n"
-          "The rules are as follows:\n"
-          "   You may pick sticks from 1 of the three piles\n"
-          "   You can pick up as many sticks as you want from that pile\n"
-          "   You have to pick up at least 1 stick each turn\n"
-          "   If you pick up the last stick you win"
-       << endl;
+    // print out the introduction
+    cout << "Welcome to Nim!! \n"
+            "This is a stick picking up game.\n"
+            "The rules are as follows:\n"
+            "   You may pick sticks from 1 of the three piles\n"
+            "   You can pick up as many sticks as you want from that pile\n"
+            "   You have to pick up at least 1 stick each turn\n"
+            "   If you pick up the last stick you win"
+         << endl;
 }
 
 int checkStartingPlayer() {
-  // ask user if they want to start
-  cout << "Do you wish to go first? (y/n), if you want to exit the program "
-          "press q"
-       << endl;
+    // ask user if they want to start
+    cout << "Do you wish to go first? (y/n), if you want to exit the program "
+            "press q"
+         << endl;
 
-  // gets pileNumber from user discarding characters after the first one and puts
-  // it in pileNumber this stops buffer overflow attacks.
-  char input = getchar();
+    // gets pileNumber from user discarding characters after the first one and puts
+    // it in pileNumber this stops buffer overflow attacks.
+    char input = getchar();
 
-  // this clears the buffer.
-  int c;
-  while ((c = getchar()) != '\n' && c != EOF) {
-  }
+    // this clears the buffer.
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+    }
 
-  if (input == 'n') {
-    return 0;
-  } else if (input == 'y') {
-    return 1;
-  } else if (input == 'q') {
-    return 2;
-  }
+    if (input == 'n') {
+        return 0;
+    } else if (input == 'y') {
+        return 1;
+    } else if (input == 'q') {
+        return 2;
+    }
 
-  cout << "error: please enter a valid character\n Try again" << endl;
+    cout << "error: please enter a valid character\n Try again" << endl;
 
-  return checkStartingPlayer();
+    return checkStartingPlayer();
 }
 
 void addValuesToList(int numberOfPiles) {
-  // loop through and add values to the list.
+    // loop through and add values to the list.
 
-  // adds value of i to maxNumberOfPiles and currentNumberOfPiles
-  for (int i = 0; i < numberOfPiles; i++) {
-    piles.push_back(i + 3);
-  }
+    // adds value of i to maxNumberOfPiles and currentNumberOfPiles
+    for (int i = 0; i < numberOfPiles; i++) {
+        piles.push_back(i + 3);
+    }
 }
 
 void printBoard() {
-  cout << "Current Board:\n";
+    cout << "Current Board:\n";
 
-  // Loop through each pile and print the "|" for currentSizeOfPile
-  for (const auto &pile : piles) {
-    for (int i = 0; i < pile; i++) {
-      cout << "|";
+    // Loop through each pile and print the "|" for currentSizeOfPile
+    for (const auto &pile: piles) {
+        for (int i = 0; i < pile; i++) {
+            cout << "|";
+        }
+        cout << endl;
     }
-    cout << endl;
-  }
 }
 
 int findPile(int isPlayer) {
-  // initiate variable pileNumber and isValidPileNumber
-  int pileNumber = 0;
-  bool isValidPileNumber = false;
+    // initiate variable pileNumber and isValidPileNumber
+    int pileNumber = 0;
+    bool isValidPileNumber = false;
 
-  // check if it is the player or computer
-  if (isPlayer == true) {
-    // ask user for pileNumber
-    while (!isValidPileNumber) {
-      cout << "Enter the index of the pile number you want to pick up from "
-              "between 1 and "
-           << checkRemainingPiles() << ": ";
-      if (cin >> pileNumber) {
-        if (pileNumber < 1 && pileNumber > checkRemainingPiles()) {
+    // check if it is the player or computer
+    if (isPlayer == true) {
+        // ask user for pileNumber
+        while (!isValidPileNumber) {
+            cout << "Enter the index of the pile number you want to pick up from "
+                    "between 1 and "
+                 << checkRemainingPiles() << ": ";
+            if (cin >> pileNumber) {
+                if (pileNumber < 1 || pileNumber > checkRemainingPiles()) {
 
-          cout << "PileNumber is outside the valid range. Try again." << endl;
-        } else {
-          isValidPileNumber = true;
+                    cout << "PileNumber is outside the valid range. Try again." << endl;
+                } else {
+                    isValidPileNumber = true;
+                }
+            } else {
+                cout << "Invalid pileNumber. Please enter an integer." << endl;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
         }
-      } else {
-        cout << "Invalid pileNumber. Please enter an integer." << endl;
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-      }
+    } else {
+
+        pileNumber = Random::getRandomNumber(checkRemainingPiles());
     }
-  } else {
 
-    pileNumber = Random::getRandomNumber(checkRemainingPiles());
-  }
-
-  pileNumber--;
-  return pileNumber;
+    pileNumber--;
+    return pileNumber;
 }
 
 int findSticks(int pileNumber, int isPlayer) {
-  // initiate variable stickNumber
-  int stickNumber = 0;
+    // initiate variable stickNumber
+    int stickNumber = 0;
 
-  bool isValidStickNumber = false;
+    bool isValidStickNumber = false;
 
-  int numberOfSticks = piles[pileNumber];
+    int numberOfSticks = piles[pileNumber];
 
-  // check if isPlayer == true
-  if (isPlayer == true) {
-    // ask user for pileNumber
-    while (!isValidStickNumber) {
-      // TODO for the pile entered above get currentPileNumber
-      cout << "Enter the number of sticks you want to pick up between 1 and "
-           << numberOfSticks << ": ";
-      if (cin >> stickNumber) {
-        if (stickNumber >= 1 && stickNumber <= numberOfSticks) {
-          isValidStickNumber = true;
-        } else {
-          cout << "StickNumber is outside the valid range. Try again." << endl;
+    // check if isPlayer == true
+    if (isPlayer == true) {
+        // ask user for pileNumber
+        while (!isValidStickNumber) {
+            // TODO for the pile entered above get currentPileNumber
+            cout << "Enter the number of sticks you want to pick up between 1 and " << numberOfSticks << ": ";
+            if (cin >> stickNumber) {
+                if (stickNumber >= 1 && stickNumber <= numberOfSticks) {
+                    isValidStickNumber = true;
+                } else {
+                    cout << "StickNumber is outside the valid range. Try again." << endl;
+                }
+            } else {
+                cout << "Invalid StickNumber. Please enter an integer." << endl;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
         }
-      } else {
-        cout << "Invalid StickNumber. Please enter an integer." << endl;
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-      }
+    } else {
+        stickNumber = Random::getRandomNumber(numberOfSticks);
     }
-  } else {
-    stickNumber = Random::getRandomNumber(numberOfSticks);
-  }
-  return stickNumber;
+    return stickNumber;
 }
 
 void updatePiles(int isPlayer) {
-  // declare variables
-  int pileNumber = findPile(isPlayer);
-  int stickNumber = findSticks(pileNumber, isPlayer);
+    // declare variables
+    int pileNumber = findPile(isPlayer);
+    int stickNumber = findSticks(pileNumber, isPlayer);
 
-  // tell player their move or computer move.
+    // tell player their move or computer move.
 
-  if (isPlayer == 1) {
-    cout << "Player 1, you picked up " << stickNumber << " stick(s) from pile "
-         << (pileNumber + 1) << "\n"
-         << endl;
-  } else {
-    cout << "The computer picked up " << stickNumber << " stick(s) from pile "
-         << (pileNumber + 1) << "\n"
-         << endl;
-  }
+    if (isPlayer == 1) {
+        cout << "Player 1, you picked up " << stickNumber << " stick(s) from pile "
+             << (pileNumber + 1) << "\n"
+             << endl;
+    } else {
+        cout << "The computer picked up " << stickNumber << " stick(s) from pile "
+             << (pileNumber + 1) << "\n"
+             << endl;
+    }
 
-  // as I have already checked if the value of stickNumber is between 1 and
-  // currentSizeOfPile I can just take stick number off.
-  piles[pileNumber] -= stickNumber;
+    // as I have already checked if the value of stickNumber is between 1 and
+    // currentSizeOfPile I can just take stick number off.
+    piles[pileNumber] -= stickNumber;
 
-  // if pileAtPileNumber.currentSizeOfPile is now equal to 0, change bool in
-  // structure to false
-  if (piles[pileNumber] == 0) {
-    piles.erase(piles.begin() + pileNumber);
-  }
+    // if pileAtPileNumber.currentSizeOfPile is now equal to 0, change bool in
+    // structure to false
+    if (piles[pileNumber] == 0) {
+        piles.erase(piles.begin() + pileNumber);
+    }
 }
 
 int checkRemainingPiles() { return piles.size(); }
 
 int checkForWinner() {
-  int remainingPiles = checkRemainingPiles();
+    int remainingPiles = checkRemainingPiles();
 
-  if (remainingPiles == 1) {
+    if (remainingPiles == 1) {
 
-    for (const auto &pile : piles) {
-      if (pile == 1) {
-        return 1;
-      }
+        for (const auto &pile: piles) {
+            if (pile == 1) {
+                return 1;
+            }
+        }
+    } else if (remainingPiles == 0) {
+        return 2;
     }
-  } else if (remainingPiles == 0) {
-    return 2;
-  }
-  return 0;
+    return 0;
 }
