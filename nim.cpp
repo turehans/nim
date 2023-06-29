@@ -3,6 +3,7 @@
 #include <limits>
 #include <random>
 #include <vector>
+#include <unistd.h>
 
 using namespace std;
 
@@ -23,6 +24,8 @@ int checkRemainingPiles();
 
 int checkForWinner();
 
+int findNumberOfPiles();
+
 // define namespace Random
 namespace Random {
 // Random number generator engine
@@ -41,12 +44,12 @@ vector<int> piles;
 int main() {
 
     // declare variables
-    int numberOfPiles = 3;
     int isPlayer;
     bool winnerFound = false;
 
     // call printIntro
     printIntro();
+    int numberOfPiles = findNumberOfPiles();
 
     // ask player if they want to go first and update isPlayer
     isPlayer = checkStartingPlayer();
@@ -72,6 +75,9 @@ int main() {
             printBoard();
             isPlayer = 0;
         } else {
+
+            cout << "The computer is thinking:" << endl;
+            sleep(2);
             if (checkForWinner() == 1) {
                 cout << "\n\nThe winner is the Computer" << endl;
                 winnerFound = true;
@@ -112,6 +118,20 @@ void printIntro() {
          << endl;
 }
 
+int findNumberOfPiles(){
+    int numPiles;
+
+    do {
+        std::cout << "Enter the number of piles (1-20): ";
+        while (!(cin >> numPiles)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Please enter a valid number of piles (1-20): ";
+        }
+    } while (numPiles < 1 || numPiles > 20);
+
+    return numPiles;
+}
 int checkStartingPlayer() {
     // ask user if they want to start
     cout << "Do you wish to go first? (y/n), if you want to exit the program "
@@ -188,6 +208,8 @@ int findPile(int isPlayer) {
         }
     } else {
 
+        cout << "Finding number of piles" << endl;
+        sleep(1);
         pileNumber = Random::getRandomNumber(checkRemainingPiles());
     }
 
@@ -222,6 +244,8 @@ int findSticks(int pileNumber, int isPlayer) {
             }
         }
     } else {
+        cout << "The computer is finding number of Sticks" << endl;
+        sleep(1);
         stickNumber = Random::getRandomNumber(numberOfSticks);
     }
     return stickNumber;
